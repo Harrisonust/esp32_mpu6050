@@ -1,18 +1,18 @@
 menu "I2C"
 
     config I2C_MASTER_SCL
-        int "SCL GPIO Num"
+        int "SCL GPIO Pin"
         default 22
         help
             GPIO number for I2C Master clock line.
 
     config I2C_MASTER_SDA
-        int "SDA GPIO Num"
+        int "SDA GPIO Pin"
         default 21
         help
             GPIO number for I2C Master data line.
 
     config BLINK_LED
-        int "GPIO Num"
+        int "GPIO Pin"
         default 5
 endmenu
