@@ -18,7 +18,7 @@ void blink(void* par) {
         // ESP_LOGI("LED", "%s", (led_state) ? "ON" : "OFF");
         gpio_set_level(LED, led_state);
         led_state = !led_state;
-        vTaskDelay(500 / portTICK_PERIOD_MS);
+        vTaskDelay(50 / portTICK_PERIOD_MS);
     }
 }
 
@@ -29,16 +29,17 @@ void mpu6050_thread(void* par) {
     else
         ESP_LOGE("MPU6050", "I2C master init failed");
 
-    mpu6050_calibrate(&calibration);
+    MPU6050_t mpu1 = (MPU6050_t){.addr = 0x68};
+
+    mpu6050_calibrate(mpu1, &calibration);
     ESP_LOGI("MPU6050", "Calibration: %f %f %f %f %f %f",
              calibration.accel_x, calibration.accel_y, calibration.accel_z,
              calibration.gyro_x, calibration.gyro_y, calibration.gyro_z);
-
     double previousTime = 0, currentTime = xTaskGetTickCount();
     double yaw = 0, roll = 0, pitch = 0;
     while (1) {
         MPU6050_data_t data;
-        mpu6050_read(&data);
+        mpu6050_read(mpu1, &data);
 
         previousTime = currentTime;
         currentTime = xTaskGetTickCount();

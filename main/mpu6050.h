@@ -8,12 +8,13 @@
 #include "esp_log.h"
 
 #define I2C_MASTER_NUM 0            /*!< I2C master i2c port number, the number of i2c peripheral interfaces available will depend on the chip */
-#define I2C_MASTER_FREQ_HZ 100000   /*!< I2C master clock frequency */
 #define I2C_MASTER_TX_BUF_DISABLE 0 /*!< I2C master doesn't need buffer */
 #define I2C_MASTER_RX_BUF_DISABLE 0 /*!< I2C master doesn't need buffer */
 #define I2C_MASTER_TIMEOUT_MS 1000
 
-#define MPU6050_SENSOR_ADDR 0x68         /*!< Slave address of the MPU6050 sensor */
+// #define MPU6050_SENSOR_ADDR 0x68  /*!< Slave address of the MPU6050 sensor */
+#define I2C_MASTER_FREQ_HZ 100000 /*!< I2C master clock frequency */
+
 #define MPU6050_WHO_AM_I_REG_ADDR 0x75   /*!< Register addresses of the "who am I" register */
 #define MPU6050_PWR_MGMT_1_REG_ADDR 0x6B /*!< Register addresses of the power managment register */
 #define MPU6050_ACCEL_XOUT_H 0x3B
@@ -41,12 +42,16 @@ typedef struct {
     double gyro_z;
 } MPU6050_data_t;
 
-esp_err_t i2c_master_init(void);
-esp_err_t mpu6050_register_read(uint8_t reg_addr, uint8_t* data, size_t len);
-esp_err_t mpu6050_register_write_byte(uint8_t reg_addr, uint8_t data);
+typedef struct {
+    int addr;
+} MPU6050_t;
+
+esp_err_t i2c_master_init();
+esp_err_t mpu6050_register_read(MPU6050_t mpu, uint8_t reg_addr, uint8_t* data, size_t len);
+esp_err_t mpu6050_register_write_byte(MPU6050_t mpu, uint8_t reg_addr, uint8_t data);
 
 void mpu6050_filter(MPU6050_data_t* data, const MPU6050_data_t shift);
-void mpu6050_read(MPU6050_data_t* data);
-void mpu6050_calibrate(MPU6050_data_t* err);
+void mpu6050_read(MPU6050_t mpu, MPU6050_data_t* data);
+void mpu6050_calibrate(MPU6050_t mpu, MPU6050_data_t* err);
 
 #endif
