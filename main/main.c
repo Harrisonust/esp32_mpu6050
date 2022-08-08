@@ -29,9 +29,9 @@ void mpu6050_thread(void* par) {
     else
         ESP_LOGE("MPU6050", "I2C master init failed");
 
-    MPU6050_t mpu1 = (MPU6050_t){.addr = 0x68};
+    MPU6050_t mpu = (MPU6050_t){.addr = 0x68};
 
-    mpu6050_calibrate(mpu1, &calibration);
+    mpu6050_calibrate(mpu, &calibration);
     ESP_LOGI("MPU6050", "Calibration: %f %f %f %f %f %f",
              calibration.accel_x, calibration.accel_y, calibration.accel_z,
              calibration.gyro_x, calibration.gyro_y, calibration.gyro_z);
@@ -39,7 +39,7 @@ void mpu6050_thread(void* par) {
     double yaw = 0, roll = 0, pitch = 0;
     while (1) {
         MPU6050_data_t data;
-        mpu6050_read(mpu1, &data);
+        mpu6050_read(mpu, &data);
 
         previousTime = currentTime;
         currentTime = xTaskGetTickCount();
@@ -72,6 +72,7 @@ void app_main(void) {
         1,
         NULL);
 
+    MPU6050_t mpu1 = (MPU6050_t){.addr = 0x68};
     xTaskCreate(
         mpu6050_thread,
         "mpu6050_task",
